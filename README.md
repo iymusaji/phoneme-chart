@@ -13,10 +13,10 @@ This interactive web-based tool visualizes the typical MEAN AGE of acquisition o
   - **Fricatives & Affricates**
 - Data is shown in 3-month increments from 30 to 96 months.
 - Colors indicate mastery level:
-  - 🔴 Not yet acquired
-  - 🟠 50% of children
-  - 🟡 75% of children
-  - 🟢 90% of children
+  - 🔴 Less than 50% of children produce this phoneme in single words
+  - 🟠 50% of children produce this phoneme in single words
+  - 🟡 75% of children produce this phoneme in single words
+  - 🟢 90% of children produce this phoneme in single words
 
 ---
 
@@ -36,10 +36,8 @@ This interactive web-based tool visualizes the typical MEAN AGE of acquisition o
 1. Download the repository.
 2. Open `Phoneme_Chart_Final.html` in any modern browser (Chrome, Firefox, etc.).
 
-### Option 2: Host with GitHub Pages
-1. Go to your repo settings → Pages.
-2. Choose branch: `main`, folder: `/root`.
-3. Visit the generated URL to view and share the chart online.
+### Option 2: View on GitHub Pages
+1. Go to this link to view it on GitHub: https://iymusaji.github.io/phoneme-chart/
 
 ---
 
@@ -63,7 +61,8 @@ You are free to:
 ### Attribution Required:
 If you use or build upon this project, please credit as follows:
 
-- **Data source**: Crowe, K., & McLeod, S. (2020). *Children's consonant acquisition in 27 languages: A cross-linguistic review*. *American Journal of Speech-Language Pathology*, 29(4), 1546–1570.
-- **Visualization** by *Imran Musaji, Wichita State University*
+- **Data source**: Crowe, K., & McLeod, S. (2020). Children's English consonant acquisition in the United States: A review. American Journal of Speech-Language Pathology, 29(4), 2155–2169. https://doi.org/10.1044/2020_AJSLP-19-00168
+
+- **Visualization**: Imran Musaji, (2025). Interactive Visualization of Crowe and McLeod's Consonant Acquisition, Wichita State University
 
 ---
