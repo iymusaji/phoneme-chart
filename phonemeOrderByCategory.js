@@ -1,0 +1,1 @@
+const phonemeOrderByCategory = {"plosives": ["b", "p", "d", "ɡ", "k", "t"], "nasals_approximants": ["n", "m", "w", "ŋ", "j", "l", "ɹ"], "fricatives_affricates": ["h", "f", "v", "ʤ", "s", "ʧ", "ʃ", "z", "ð", "ʒ", "θ"]};

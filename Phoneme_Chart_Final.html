@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phoneme Progression by Age</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="phonemeData.js"></script>
+  <script src="phonemeOrderByCategory.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(initChart);
+
+    const ageLabels = [
+      "30 mo (2y6m)", "33 mo (2y9m)", "36 mo (3y0m)", "39 mo (3y3m)", "42 mo (3y6m)", "45 mo (3y9m)", "48 mo (4y0m)",
+      "51 mo (4y3m)", "54 mo (4y6m)", "57 mo (4y9m)", "60 mo (5y0m)", "63 mo (5y3m)", "66 mo (5y6m)", "69 mo (5y9m)",
+      "72 mo (6y0m)", "75 mo (6y3m)", "78 mo (6y6m)", "81 mo (6y9m)", "84 mo (7y0m)", "87 mo (7y3m)", "90 mo (7y6m)", "93 mo (7y9m)", "96 mo (8y0m)"
+    ];
+
+    let currentStep = -1;
+
+    function initChart() {
+      drawIntro();
+    }
+
+    function drawIntro() {
+      document.getElementById("subtitle").innerText = "Click 'Next' to begin the chart animation.";
+      document.getElementById("grid").style.display = "none";
+    }
+
+    function drawCharts(step) {
+      document.getElementById("grid").style.display = "grid";
+      document.getElementById("subtitle").innerText = `Phoneme acquisition at ${ageLabels[step]}`;
+      drawSingleChart("chart_plosives_chart", phonemeOrderByCategory.plosives, step);
+      drawSingleChart("chart_nasals_chart", phonemeOrderByCategory.nasals_approximants, step);
+      drawSingleChart("chart_fricatives_chart", phonemeOrderByCategory.fricatives_affricates, step);
+    }
+
+    function drawSingleChart(containerId, phonemeList, step) {
+      const data = new google.visualization.DataTable();
+      data.addColumn('string', 'Phoneme');
+      data.addColumn('number', 'Mastery');
+      data.addColumn({ type: 'string', role: 'style' });
+
+      phonemeList.forEach(phoneme => {
+        const value = phonemeData[phoneme]?.[step] ?? 0;
+        let color = 'red';
+        if (value >= 90) color = 'green';
+        else if (value >= 75) color = 'yellow';
+        else if (value >= 50) color = 'orange';
+        data.addRow([phoneme, value, `color: ${color}`]);
+      });
+
+      const options = {
+        title: null,
+        hAxis: {
+          title: 'Phoneme Accuracy',
+          ticks: [
+            { v: 0, f: '0%' },
+            { v: 50, f: '50%' },
+            { v: 75, f: '75%' },
+            { v: 90, f: '90%' }
+          ],
+          minValue: 0,
+          maxValue: 100
+        },
+        vAxis: {
+          direction: -1
+        },
+        legend: { position: 'none' },
+        animation: { duration: 0 }
+      };
+
+      const chart = new google.visualization.BarChart(document.getElementById(containerId));
+      chart.draw(data, options);
+    }
+
+    function nextStep() {
+      if (currentStep < ageLabels.length - 1) {
+        currentStep++;
+        drawCharts(currentStep);
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        drawCharts(currentStep);
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 0;
+    }
+
+    #subtitle {
+      text-align: center;
+      font-size: 1.25em;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+
+    .controls {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .controls button {
+      font-size: 1.1em;
+      padding: 8px 20px;
+      margin: 0 10px;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: 48% 48%;
+      grid-template-rows: auto auto;
+      column-gap: 3%;
+      row-gap: 6px;
+    }
+
+    .chart-group {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 8px 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chart-title {
+      font-weight: bold;
+      margin-bottom: 2px;
+      font-size: 1em;
+    }
+
+    .chart-box {
+      width: 100%;
+    }
+
+    #chart_plosives .chart-box,
+    #chart_nasals .chart-box {
+      height: 280px;
+    }
+
+    #chart_fricatives .chart-box {
+      height: 420px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Phoneme Progression by Age</h1>
+  <div id="subtitle">This animated chart shows when children typically master different English consonant sounds. Click the buttons to step through development in 3-month increments.</div>
+
+  <div class="controls">
+    <button onclick="previousStep()">◀ Previous</button>
+    <button onclick="nextStep()">Next ▶</button>
+  </div>
+
+  <div id="grid">
+    <div class="chart-group" id="chart_plosives">
+      <div class="chart-title">Stop/Plosives</div>
+      <div class="chart-box" id="chart_plosives_chart"></div>
+    </div>
+
+    <div class="chart-group" id="chart_nasals">
+      <div class="chart-title">Nasals & Approximants</div>
+      <div class="chart-box" id="chart_nasals_chart"></div>
+    </div>
+
+    <div class="chart-group" id="chart_fricatives">
+      <div class="chart-title">Fricatives & Affricates</div>
+      <div class="chart-box" id="chart_fricatives_chart"></div>
+    </div>
+  </div>
+</body>
+</html>
