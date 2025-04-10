@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Phoneme Progression by Age</title>
+  <title>Phoneme Progression by Mean Age of Acquisition</title>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="phonemeData.js"></script>
   <script src="phonemeOrderByCategory.js"></script>
@@ -137,7 +137,7 @@
     .chart-title {
       font-weight: bold;
       margin-bottom: 2px;
-      font-size: 1em;
+      font-size: 1.1em; font-weight: bold; text-align: left; padding-left: 1.5em; text-indent: -1.5em;
     }
 
     .chart-box {
@@ -155,7 +155,7 @@
   </style>
 </head>
 <body>
-  <h1>Phoneme Progression by Age</h1>
+  <h1>Phoneme Progression by Mean Age of Acquisition</h1>
   <div id="subtitle">This animated chart shows when children typically master different English consonant sounds. Click the buttons to step through development in 3-month increments.</div>
 
   <div class="controls">
@@ -164,6 +164,9 @@
   </div>
 
   <div id="grid">
+    <div style="grid-column: 2; grid-row: 2; text-align: right; font-size: 1em; color: #555; align-self: end;">
+      Data interpolated from Crowe, K., & McLeod, S. (2020). <i>Children's consonant acquisition in 27 languages: A cross-linguistic review</i>. <i>AJSLP</i>, 29(4), 1546–1570.
+    </div>
     <div class="chart-group" id="chart_plosives">
       <div class="chart-title">Stop/Plosives</div>
       <div class="chart-box" id="chart_plosives_chart"></div>
@@ -179,5 +182,6 @@
       <div class="chart-box" id="chart_fricatives_chart"></div>
     </div>
   </div>
+
 </body>
 </html>
