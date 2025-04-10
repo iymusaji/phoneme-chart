@@ -39,6 +39,8 @@
       data.addColumn('string', 'Phoneme');
       data.addColumn('number', 'Mastery');
       data.addColumn({ type: 'string', role: 'style' });
+      data.addColumn({ type: 'string', role: 'annotation' });
+      data.addColumn({ type: 'string', role: 'annotationText' });
 
       phonemeList.forEach(phoneme => {
         let value = phonemeData[phoneme]?.[step] ?? 0;
@@ -48,7 +50,9 @@
         if (value >= 90) color = 'green';
         else if (value >= 75) color = 'yellow';
         else if (value >= 50) color = 'orange';
-        data.addRow([phoneme, value, `color: ${color}`]);
+        let phonemeLabel = (phonemeData[phoneme]?.[step] ?? 0) === 0 ? `<span style='color:red'>${phoneme}</span>` : phoneme;
+        const textStyle = (phonemeData[phoneme]?.[step] ?? 0) === 0 ? 'color: red;' : null;
+        data.addRow([phoneme, value, `color: ${color}`, phoneme, textStyle]);
       });
 
       const options = {
