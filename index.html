@@ -5,94 +5,7 @@
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="phonemeData.js"></script>
   <script src="phonemeOrderByCategory.js"></script>
-  <script type="text/javascript">
-    google.charts.load('current', { packages: ['corechart'] });
-    google.charts.setOnLoadCallback(initChart);
-
-    const ageLabels = [
-      "30 mo (2y6m)", "33 mo (2y9m)", "36 mo (3y0m)", "39 mo (3y3m)", "42 mo (3y6m)", "45 mo (3y9m)", "48 mo (4y0m)",
-      "51 mo (4y3m)", "54 mo (4y6m)", "57 mo (4y9m)", "60 mo (5y0m)", "63 mo (5y3m)", "66 mo (5y6m)", "69 mo (5y9m)",
-      "72 mo (6y0m)", "75 mo (6y3m)", "78 mo (6y6m)", "81 mo (6y9m)", "84 mo (7y0m)", "87 mo (7y3m)", "90 mo (7y6m)", "93 mo (7y9m)", "96 mo (8y0m)"
-    ];
-
-    let currentStep = -1;
-
-    function initChart() {
-      drawIntro();
-    }
-
-    function drawIntro() {
-      document.getElementById("subtitle").innerText = "Click 'Next' to begin the chart animation.";
-      document.getElementById("grid").style.display = "none";
-    }
-
-    function drawCharts(step) {
-      document.getElementById("grid").style.display = "grid";
-      document.getElementById("subtitle").innerText = `Phoneme acquisition at ${ageLabels[step]}`;
-      drawSingleChart("chart_plosives_chart", phonemeOrderByCategory.plosives, step);
-      drawSingleChart("chart_nasals_chart", phonemeOrderByCategory.nasals_approximants, step);
-      drawSingleChart("chart_fricatives_chart", phonemeOrderByCategory.fricatives_affricates, step);
-    }
-
-    function drawSingleChart(containerId, phonemeList, step) {
-      const data = new google.visualization.DataTable();
-      data.addColumn('string', 'Phoneme');
-      data.addColumn('number', 'Mastery');
-      data.addColumn({ type: 'string', role: 'style' });
-      data.addColumn({ type: 'string', role: 'annotation' });
-      data.addColumn({ type: 'string', role: 'annotationText' });
-
-      phonemeList.forEach(phoneme => {
-        let value = phonemeData[phoneme]?.[step] ?? 0;
-        if (value === 0) value = 0.1;
-        if (value === 0) value = 0.1;  // show minimal red bar for visibility
-        let color = 'red';
-        if (value >= 90) color = 'green';
-        else if (value >= 75) color = 'yellow';
-        else if (value >= 50) color = 'orange';
-        let phonemeLabel = (phonemeData[phoneme]?.[step] ?? 0) === 0 ? `<span style='color:red'>${phoneme}</span>` : phoneme;
-        const textStyle = (phonemeData[phoneme]?.[step] ?? 0) === 0 ? 'color: red;' : null;
-        data.addRow([phoneme, value, `color: ${color}`, phoneme, textStyle]);
-      });
-
-      const options = {
-        title: null,
-        hAxis: {
-          title: 'Phoneme Accuracy',
-          ticks: [
-            { v: 0, f: '0%' },
-            { v: 50, f: '50%' },
-            { v: 75, f: '75%' },
-            { v: 90, f: '90%' }
-          ],
-          minValue: 0,
-          maxValue: 100
-        },
-        vAxis: {
-          direction: -1
-        },
-        legend: { position: 'none' },
-        animation: { duration: 0 }
-      };
-
-      const chart = new google.visualization.BarChart(document.getElementById(containerId));
-      chart.draw(data, options);
-    }
-
-    function nextStep() {
-      if (currentStep < ageLabels.length - 1) {
-        currentStep++;
-        drawCharts(currentStep);
-      }
-    }
-
-    function previousStep() {
-      if (currentStep > 0) {
-        currentStep--;
-        drawCharts(currentStep);
-      }
-    }
-  </script>
+  
   <style>
     body {
       font-family: sans-serif;
@@ -123,78 +36,230 @@
       margin: 0 10px;
     }
 
+    /* Dynamic responsive grid layout */
     #grid {
       display: grid;
-      grid-template-columns: 48% 48%;
-      grid-template-rows: auto auto;
-      column-gap: 3%;
-      row-gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 10px;
     }
 
     .chart-group {
       border: 1px solid #ccc;
       border-radius: 6px;
-      padding: 8px 8px 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 4px;
+      margin: 4px 0;
     }
 
     .chart-title {
       font-weight: bold;
       margin-bottom: 2px;
-      font-size: 1.1em; font-weight: bold; text-align: left; padding-left: 1.5em; text-indent: -1.5em;
+      font-size: 1.1em;
+      text-align: left;
+      padding-left: 1.5em;
+      text-indent: -1.5em;
     }
 
+    /* Use a relative height to adapt with viewport size */
     .chart-box {
       width: 100%;
-    }
-
-    #chart_plosives .chart-box,
-    #chart_nasals .chart-box {
-      height: 280px;
-    }
-
-    #chart_fricatives .chart-box {
-      height: 420px;
+      height: 30vh;
+      overflow: hidden;
     }
   </style>
+
+  <script type="text/javascript">
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(initChart);
+
+    const ageLabels = [
+      "30 mo (2y6m)", "33 mo (2y9m)", "36 mo (3y0m)", "39 mo (3y3m)", "42 mo (3y6m)", "45 mo (3y9m)", "48 mo (4y0m)",
+      "51 mo (4y3m)", "54 mo (4y6m)", "57 mo (4y9m)", "60 mo (5y0m)", "63 mo (5y3m)", "66 mo (5y6m)", "69 mo (5y9m)",
+      "72 mo (6y0m)", "75 mo (6y3m)", "78 mo (6y6m)", "81 mo (6y9m)", "84 mo (7y0m)", "87 mo (7y3m)", "90 mo (7y6m)",
+      "93 mo (7y9m)", "96 mo (8y0m)"
+    ];
+
+    let currentStep = -1;
+    let chartMap = {};
+    let dataMap = {};
+
+    const categories = {
+      chart_stops_chart: phonemeOrderByCategory.stops,
+      chart_fricatives_chart: phonemeOrderByCategory.fricatives,
+      chart_affricates_chart: phonemeOrderByCategory.affricates,
+      chart_nasals_chart: phonemeOrderByCategory.nasals,
+      chart_glides_chart: phonemeOrderByCategory.glides,
+      chart_liquids_chart: phonemeOrderByCategory.liquids
+    };
+
+    function initChart() {
+      drawIntro();
+    }
+
+    function drawIntro() {
+      document.getElementById("subtitle").innerText = "Click 'Next' to begin the chart animation.";
+      document.getElementById("grid").style.display = "none";
+    }
+
+    function initCharts() {
+      for (const [chartId, phonemeList] of Object.entries(categories)) {
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Phoneme');
+        data.addColumn('number', 'Mastery');
+        data.addColumn({ type: 'string', role: 'style' });
+        data.addColumn({ type: 'string', role: 'annotation' });
+        data.addColumn({ type: 'string', role: 'annotationText' });
+
+        phonemeList.forEach(phoneme => {
+          let initial = phonemeData[phoneme]?.[0] ?? 0;
+          if (initial === 0) initial = 0.1;
+          let color = getColor(initial);
+          data.addRow([phoneme, initial, `color: ${color}`, phoneme, '']);
+        });
+
+        const chart = new google.visualization.BarChart(document.getElementById(chartId));
+        chart.draw(data, getChartOptions());
+        chartMap[chartId] = chart;
+        dataMap[chartId] = data;
+      }
+    }
+
+    function drawCharts(step) {
+      document.getElementById("grid").style.display = "grid";
+      document.getElementById("subtitle").innerText = `Phoneme acquisition at ${ageLabels[step]}`;
+      for (const [chartId, phonemeList] of Object.entries(categories)) {
+        const chart = chartMap[chartId];
+        const data = dataMap[chartId];
+
+        phonemeList.forEach((phoneme, index) => {
+          let value = phonemeData[phoneme]?.[step] ?? 0;
+          if (value === 0) value = 0.1;
+          let color = getColor(value);
+          data.setValue(index, 1, value);
+          data.setValue(index, 2, `color: ${color}`);
+        });
+
+        chart.draw(data, getChartOptions());
+      }
+    }
+
+    function getColor(value) {
+      if (value >= 90) return 'green';
+      if (value >= 75) return 'yellow';
+      if (value >= 50) return 'orange';
+      return 'red';
+    }
+
+    function getChartOptions() {
+      return {
+        title: null,
+        hAxis: {
+          title: 'Phoneme Accuracy',
+          ticks: [
+            { v: 0, f: '0%' },
+            { v: 50, f: '50%' },
+            { v: 75, f: '75%' },
+            { v: 90, f: '90%' }
+          ],
+          minValue: 0,
+          maxValue: 100
+        },
+        vAxis: { direction: -1 },
+        legend: { position: 'none' },
+        animation: {
+          duration: 600,
+          easing: 'out'
+        }
+      };
+    }
+
+    function nextStep() {
+      if (currentStep === -1) {
+        currentStep = 0;
+        initCharts();
+        document.getElementById("grid").style.display = "grid";
+        drawCharts(currentStep);
+      } else if (currentStep < ageLabels.length - 1) {
+        currentStep++;
+        drawCharts(currentStep);
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        drawCharts(currentStep);
+      }
+    }
+
+    // Redraw charts when the window is resized
+    window.addEventListener("resize", function() {
+      if (currentStep > -1) {
+        drawCharts(currentStep);
+      }
+    });
+  </script>
 </head>
 <body>
   <h1>Phoneme Progression by Mean Age of Acquisition</h1>
-  <div id="subtitle">This animated chart shows when children typically master different English consonant sounds. Click the buttons to step through development in 3-month increments.</div>
+  <div id="subtitle">
+    This animated chart shows when children typically master different English consonant sounds.
+    Click the buttons to step through development in 3-month increments.
+  </div>
 
   <div class="controls">
+    <div id="infobox" style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin: 10px auto 0; max-width: 700px; font-size: 0.95em; color: #333;">
+      <div><strong>Based on:</strong> Combined data from 15 studies of 18,907 children acquiring English in the United States</div>
+      <br>
+      <div>
+        <strong>Data source:</strong> Crowe, K., & McLeod, S. (2020).<br>
+        <i>Children's English consonant acquisition in the United States: A review.</i><br>
+        <i>American Journal of Speech-Language Pathology, 29</i>(4), 2155–2169.<br>
+        <a href="https://doi.org/10.1044/2020_AJSLP-19-00168" target="_blank">
+          https://doi.org/10.1044/2020_AJSLP-19-00168
+        </a>
+      </div>
+      <div style="margin-top: 0.5em;">
+        <em>Visualization by Imran Musaji, PhD CCC-SLP, Wichita State Universit</em>
+      </div>
+      <br>
+      <div>
+        <strong>Key:</strong>
+        <span style="color:red;">🔴</span> Not yet acquired &nbsp;
+        <span style="color:orange;">🟠</span> 50% of children &nbsp;
+        <span style="color:yellow;">🟡</span> 75% of children &nbsp;
+        <span style="color:green;">🟢</span> 90% of children
+      </div>
+    </div>
+
     <button onclick="previousStep()">◀ Previous</button>
     <button onclick="nextStep()">Next ▶</button>
   </div>
 
-  <div id="grid">
-    <div style="grid-column: 2; grid-row: 2; text-align: right; font-size: 1em; color: #555; align-self: end;">
-     
+  <div id="grid" style="display:none;">
+    <div class="chart-group" id="chart_stops">
+      <div class="chart-title">Stops</div>
+      <div class="chart-box" id="chart_stops_chart"></div>
     </div>
-    <div class="chart-group" id="chart_plosives">
-      <div class="chart-title">Stop/Plosives</div>
-      <div class="chart-box" id="chart_plosives_chart"></div>
-    </div>
-
-    <div class="chart-group" id="chart_nasals">
-      <div class="chart-title">Nasals & Approximants</div>
-      <div class="chart-box" id="chart_nasals_chart"></div>
-    </div>
-
     <div class="chart-group" id="chart_fricatives">
-      <div class="chart-title">Fricatives & Affricates</div>
+      <div class="chart-title">Fricatives</div>
       <div class="chart-box" id="chart_fricatives_chart"></div>
     </div>
-  <div style="grid-column: 2; grid-row: 2; font-size: 1.1em; font-weight: bold; text-align: left; padding-left: 1em; text-indent: -1em; line-height: 1.4em;">
-    <div><strong>Key:</strong> Percent of children that produce target phoneme </div>
-    <div style="font-weight: normal;">🔴 Less than 50% of children <br>🟠 50% of children <br>🟡 75% of children<br>🟢 90% of children</div>
-    <br>
-    <div style="font-weight: normal;"><strong>Based on:</strong> Combined data from 15 studies of 18,907 children acquiring English in the United States</div>
-    <div style="font-weight: normal;"><strong>Data source: </strong> Crowe, K., & McLeod, S. (2020). <i>Children's English consonant acquisition in the United States: A review.</i> <i>American Journal of Speech-Language Pathology, 29</i>(4), 2155–2169. <a href="https://doi.org/10.1044/2020_AJSLP-19-00168" target="_blank">https://doi.org/10.1044/2020_AJSLP-19-00168</a></div>
-    <div style="font-weight: normal;"><strong>Visualization created by:</strong> Imran Musaji, PhD CCC-SLP, Wichita State University</div>
+    <div class="chart-group" id="chart_affricates">
+      <div class="chart-title">Affricates</div>
+      <div class="chart-box" id="chart_affricates_chart"></div>
+    </div>
+    <div class="chart-group" id="chart_nasals">
+      <div class="chart-title">Nasals</div>
+      <div class="chart-box" id="chart_nasals_chart"></div>
+    </div>
+    <div class="chart-group" id="chart_glides">
+      <div class="chart-title">Glides</div>
+      <div class="chart-box" id="chart_glides_chart"></div>
+    </div>
+    <div class="chart-group" id="chart_liquids">
+      <div class="chart-title">Liquids</div>
+      <div class="chart-box" id="chart_liquids_chart"></div>
+    </div>
   </div>
-</div>
 </body>
 </html>
