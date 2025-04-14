@@ -71,7 +71,9 @@
     google.charts.load('current', { packages: ['corechart'] });
     google.charts.setOnLoadCallback(initChart);
 
+    // Updated ageLabels: first element is the baseline (27 months)
     const ageLabels = [
+      "27 mo (2y3m)",  // Pre-baseline: no phoneme acquired
       "30 mo (2y6m)", "33 mo (2y9m)", "36 mo (3y0m)", "39 mo (3y3m)", "42 mo (3y6m)", "45 mo (3y9m)", "48 mo (4y0m)",
       "51 mo (4y3m)", "54 mo (4y6m)", "57 mo (4y9m)", "60 mo (5y0m)", "63 mo (5y3m)", "66 mo (5y6m)", "69 mo (5y9m)",
       "72 mo (6y0m)", "75 mo (6y3m)", "78 mo (6y6m)", "81 mo (6y9m)", "84 mo (7y0m)", "87 mo (7y3m)", "90 mo (7y6m)",
@@ -96,10 +98,12 @@
     }
 
     function drawIntro() {
-      document.getElementById("subtitle").innerText = "Click 'Next' to begin the chart animation.";
+      document.getElementById("subtitle").innerText =
+        "Click 'Next' to begin the chart animation.";
       document.getElementById("grid").style.display = "none";
     }
 
+    // Initialize charts with baseline values (all 0)
     function initCharts() {
       for (const [chartId, phonemeList] of Object.entries(categories)) {
         const data = new google.visualization.DataTable();
@@ -110,13 +114,15 @@
         data.addColumn({ type: 'string', role: 'annotationText' });
 
         phonemeList.forEach(phoneme => {
-          let initial = phonemeData[phoneme]?.[0] ?? 0;
-          if (initial === 0) initial = 0.1;
+          // Initially use 0 for all phonemes (baseline)
+          let initial = 0;
           let color = getColor(initial);
           data.addRow([phoneme, initial, `color: ${color}`, phoneme, '']);
         });
 
-        const chart = new google.visualization.BarChart(document.getElementById(chartId));
+        const chart = new google.visualization.BarChart(
+          document.getElementById(chartId)
+        );
         chart.draw(data, getChartOptions());
         chartMap[chartId] = chart;
         dataMap[chartId] = data;
@@ -125,14 +131,23 @@
 
     function drawCharts(step) {
       document.getElementById("grid").style.display = "grid";
-      document.getElementById("subtitle").innerText = `Phoneme acquisition at ${ageLabels[step]}`;
+      document.getElementById("subtitle").innerText =
+        `Phoneme acquisition at ${ageLabels[step]}`;
+
       for (const [chartId, phonemeList] of Object.entries(categories)) {
         const chart = chartMap[chartId];
         const data = dataMap[chartId];
 
         phonemeList.forEach((phoneme, index) => {
-          let value = phonemeData[phoneme]?.[step] ?? 0;
-          if (value === 0) value = 0.1;
+          let value;
+          if (step === 0) {
+            // For the pre-baseline step, force all values to zero.
+            value = 0;
+          } else {
+            // For subsequent steps, subtract one from the index to align with your data.
+            value = phonemeData[phoneme]?.[step - 1] ?? 0;
+            if (value === 0) value = 0.1;  // maintain a visible minimal bar height
+          }
           let color = getColor(value);
           data.setValue(index, 1, value);
           data.setValue(index, 2, `color: ${color}`);
@@ -166,7 +181,7 @@
         vAxis: { direction: -1 },
         legend: { position: 'none' },
         animation: {
-          duration: 600,
+          duration: 800, // slower than before
           easing: 'out'
         }
       };
@@ -174,9 +189,9 @@
 
     function nextStep() {
       if (currentStep === -1) {
+        // On the very first click, set currentStep to 0 and load the pre-baseline (all 0's)
         currentStep = 0;
         initCharts();
-        document.getElementById("grid").style.display = "grid";
         drawCharts(currentStep);
       } else if (currentStep < ageLabels.length - 1) {
         currentStep++;
