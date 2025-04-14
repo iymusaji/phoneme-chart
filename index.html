@@ -216,10 +216,6 @@
 </head>
 <body>
   <h1>Phoneme Progression by Mean Age of Acquisition</h1>
-  <div id="subtitle">
-    This animated chart shows when children typically master different English consonant sounds.
-    Click the buttons to step through development in 3-month increments.
-  </div>
 
   <div class="controls">
     <div id="infobox" style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin: 10px auto 0; max-width: 700px; font-size: 0.95em; color: #333;">
@@ -234,7 +230,7 @@
         </a>
       </div>
       <div style="margin-top: 0.5em;">
-        <strong>Visualization by</strong> Imran Musaji, <em>PhD CCC-SLP, Wichita State University </em>
+        <strong>Visualization by</strong> Imran Musaji, <em>PhD CCC-SLP, Wichita State University</em>
       </div>
       <br>
       <div>
@@ -244,10 +240,16 @@
         <span style="color:yellow;">🟡</span> 75% of children &nbsp;
         <span style="color:green;">🟢</span> 90% of children
       </div>
+      
+      <!-- Moved subtitle element -->
+      <div id="subtitle">
+        This animated chart shows when children typically master different English consonant sounds.
+        Click the buttons to step through development in 3-month increments.
+      </div>
+      
+      <button onclick="previousStep()">◀ Previous</button>
+      <button onclick="nextStep()">Next ▶</button>
     </div>
-
-    <button onclick="previousStep()">◀ Previous</button>
-    <button onclick="nextStep()">Next ▶</button>
   </div>
 
   <div id="grid" style="display:none;">
